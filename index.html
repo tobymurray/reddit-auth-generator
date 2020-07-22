@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <script>
+    function loadDoc() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://www.reddit.com/api/v1/scopes');
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          alert('User\'s name is ' + xhr.responseText);
+        }
+        else {
+          alert('Request failed.  Returned status of ' + xhr.status);
+        }
+      };
+      xhr.send();
+
+    }
+
+    function validate() {
+      var clientId = document.getElementById('clientId').value;
+      var responseType = document.getElementById('responseType').value;
+      var state = document.getElementById('state').value;
+      var redirectUri = document.getElementById('redirectUri').value;
+      var duration = document.getElementById('duration').value;
+      var scopes = document.getElementById('scopes').value;
+
+      var link = document.getElementById('outputHref');
+      link.setAttribute('href', `https://www.reddit.com/api/v1/authorize?client_id=${clientId}&response_type=${responseType}&state=${state}&redirect_uri=${redirectUri}&duration=${duration}&scope=${scopes}`);
+      return false;
+    }
+    function init() {
+      document.getElementById('form').onsubmit = validate;
+    }
+    window.onload = init;
+  </script>
+
+
+</head>
+
+<body>
+
+  <div id="container">
+    <!-- flex container -->
+
+    <div class="box" id="bluebox">
+      <!-- flex item -->
+      <h1>Generate Reddit auth string</h1>
+
+      <form id="form">
+        <label for="clientId">Client ID:</label><br>
+        <input type="text" id="clientId" name="clientId"><br>
+
+        <label for="clienresponseTypetId">Response Type:</label><br>
+        <input type="text" id="responseType" name="responseType"><br>
+
+        <label for="state">State:</label><br>
+        <input type="text" id="state" name="state"><br>
+
+        <label for="redirectUri">Redirect URI:</label><br>
+        <input type="text" id="redirectUri" name="redirectUri" value="https://www.reddit.com/prefs/apps"><br>
+
+        <label for="duration">Duration:</label><br>
+        <select name="duration" id="duration" value="temporary">
+          <option value="temporary">Temporary</option>
+          <option value="permanent">Permanent</option>
+        </select> <br>
+
+        <label for="scopes">Scopes:</label><br>
+        <input type="text" id="scopes" name="scopes"><br>
+
+        <input type="submit" value="Submit">
+      </form>
+      <a id="outputHref" href="">Link</a>
+
+      <button type="button" onclick="loadDoc()">Change Content</button>
+
+      <!-- <span>https://www.reddit.com/api/v1/authorize?</span><span>client_id=</span><span>{CLIENT_ID}</span><span>&response_type=</span><span>{TYPE}</span><span>&state=</span><span>{RANDOM_STRING}</span><span>&redirect_uri=</span><span>{URI}</span><span>&duration=</span><span>{DURATION}</span><span>&scope=</span><span>{SCOPES}</span> -->
+    </div>
+  </div>
+
+</body>
+
+</html>
