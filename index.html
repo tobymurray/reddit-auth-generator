@@ -39,6 +39,29 @@
     window.onload = init;
   </script>
 
+<script>
+  function createTagSpan(scope) {
+
+  }
+  function myCallback(data){
+    console.log(data);
+    var allSpans = [];
+    for (const scope in data) {
+      console.log(data[scope]);
+      console.log("Creating a span for " + data[scope].id);
+      var span = document.createElement('span');
+      span.innerHTML = data[scope].id;
+      allSpans.push(span);
+    }
+
+    window.addEventListener('load',  event => {
+      console.log("Going to add everything!");
+      allSpans.forEach(span => document.body.appendChild(span));
+    });
+  }
+</script>
+<script src="https://jsonp.afeld.me/?callback=myCallback&url=https://www.reddit.com/api/v1/scopes"></script>
+
 
 </head>
 
