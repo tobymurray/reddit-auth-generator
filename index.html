@@ -6,21 +6,6 @@
   <meta content="utf-8" http-equiv="encoding">
   <link rel="stylesheet" type="text/css" href="main.css">
   <script>
-    function loadDoc() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://www.reddit.com/api/v1/scopes');
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          alert('User\'s name is ' + xhr.responseText);
-        }
-        else {
-          alert('Request failed.  Returned status of ' + xhr.status);
-        }
-      };
-      xhr.send();
-
-    }
-
     function validate() {
       var clientId = document.getElementById('clientId').value;
       var responseType = document.getElementById('responseType').value;
@@ -39,28 +24,34 @@
     window.onload = init;
   </script>
 
-<script>
-  function createTagSpan(scope) {
+  <script>
+    function createTagSpan(scope) {
 
-  }
-  function myCallback(data){
-    console.log(data);
-    var allSpans = [];
-    for (const scope in data) {
-      console.log(data[scope]);
-      console.log("Creating a span for " + data[scope].id);
-      var span = document.createElement('span');
-      span.innerHTML = data[scope].id;
-      allSpans.push(span);
     }
+    function myCallback(data) {
+      var allSpans = [];
+      for (const scope in data) {
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.id = data[scope].id;
+        input.name = data[scope].id;
 
-    window.addEventListener('load',  event => {
-      console.log("Going to add everything!");
-      allSpans.forEach(span => document.body.appendChild(span));
-    });
-  }
-</script>
-<script src="https://jsonp.afeld.me/?callback=myCallback&url=https://www.reddit.com/api/v1/scopes"></script>
+        var label = document.createElement('label');
+        label.for = data[scope].id;
+        label.appendChild(input)
+
+        label.appendChild(document.createTextNode(data[scope].name))
+
+        allSpans.push(label);
+        allSpans.push(document.createElement('br'));
+      }
+
+      window.addEventListener('load', event => {
+        allSpans.forEach(span => document.getElementById('checkboxContainer').appendChild(span));
+      });
+    }
+  </script>
+  <script src="https://jsonp.afeld.me/?callback=myCallback&url=https://www.reddit.com/api/v1/scopes"></script>
 
 
 </head>
@@ -93,16 +84,13 @@
           <option value="permanent">Permanent</option>
         </select> <br>
 
-        <label for="scopes">Scopes:</label><br>
-        <input type="text" id="scopes" name="scopes"><br>
-
         <input type="submit" value="Submit">
       </form>
       <a id="outputHref" href="">Link</a>
 
-      <button type="button" onclick="loadDoc()">Change Content</button>
-
-      <!-- <span>https://www.reddit.com/api/v1/authorize?</span><span>client_id=</span><span>{CLIENT_ID}</span><span>&response_type=</span><span>{TYPE}</span><span>&state=</span><span>{RANDOM_STRING}</span><span>&redirect_uri=</span><span>{URI}</span><span>&duration=</span><span>{DURATION}</span><span>&scope=</span><span>{SCOPES}</span> -->
+    </div>
+    <div class="box" id="checkboxContainer">
+      <h2>Scopes</h2>
     </div>
   </div>
 
