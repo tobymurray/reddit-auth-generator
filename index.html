@@ -6,35 +6,76 @@
   <meta content="utf-8" http-equiv="encoding">
   <link rel="stylesheet" type="text/css" href="main.css">
   <script>
-    function validate() {
+    function generateRandomString(length) {
+      var result = '';
+      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var charactersLength = characters.length;
+      for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+    }
+
+    function convertSelectedScopesToString() {
+      var checkboxes = document.getElementsByName('scopes');
+
+      var scopeString = "";
+      for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+          scopeString += checkboxes[i].id + ' ';
+        }
+      }
+
+      // Strip the last space just so it's tidy
+      return encodeURIComponent(scopeString.substring(0, scopeString.length - 1));
+    }
+
+    function buildAuthLink() {
       var clientId = document.getElementById('clientId').value;
       var responseType = document.getElementById('responseType').value;
       var state = document.getElementById('state').value;
       var redirectUri = document.getElementById('redirectUri').value;
       var duration = document.getElementById('duration').value;
-      var scopes = document.getElementById('scopes').value;
+      var scopes = convertSelectedScopesToString();
 
       var link = document.getElementById('outputHref');
-      link.setAttribute('href', `https://www.reddit.com/api/v1/authorize?client_id=${clientId}&response_type=${responseType}&state=${state}&redirect_uri=${redirectUri}&duration=${duration}&scope=${scopes}`);
+      link.value = `https://www.reddit.com/api/v1/authorize?client_id=${clientId}&response_type=${responseType}&state=${state}&redirect_uri=${redirectUri}&duration=${duration}&scope=${scopes}`;
       return false;
     }
+
     function init() {
-      document.getElementById('form').onsubmit = validate;
+      document.getElementById('form').onsubmit = buildAuthLink;
+      document.getElementById('state').value = generateRandomString(8);
     }
+
     window.onload = init;
   </script>
 
   <script>
-    function createTagSpan(scope) {
+    function copyToClipboard() {
+      /* Get the text field */
+      var copyText = document.getElementById("myInput");
 
-    }
-    function myCallback(data) {
+      /* Select the text field */
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+      /* Copy the text inside the text field */
+      document.execCommand("copy");
+
+      /* Alert the copied text */
+      alert("Copied the text: " + copyText.value);
+    } 
+  </script>
+
+  <script>
+    function createSpans(data) {
       var allSpans = [];
       for (const scope in data) {
         var input = document.createElement('input');
         input.type = 'checkbox';
         input.id = data[scope].id;
-        input.name = data[scope].id;
+        input.name = 'scopes';
 
         var label = document.createElement('label');
         label.for = data[scope].id;
@@ -51,8 +92,7 @@
       });
     }
   </script>
-  <script src="https://jsonp.afeld.me/?callback=myCallback&url=https://www.reddit.com/api/v1/scopes"></script>
-
+  <script src="https://jsonp.afeld.me/?callback=createSpans&url=https://www.reddit.com/api/v1/scopes"></script>
 
 </head>
 
@@ -69,8 +109,11 @@
         <label for="clientId">Client ID:</label><br>
         <input type="text" id="clientId" name="clientId"><br>
 
-        <label for="clienresponseTypetId">Response Type:</label><br>
-        <input type="text" id="responseType" name="responseType"><br>
+        <label for="responseType">Response Type:</label><br>
+        <select name="responseType" id="responseType" value="code">
+          <option value="code">Code</option>
+          <option value="token">Token</option>
+        </select> <br>
 
         <label for="state">State:</label><br>
         <input type="text" id="state" name="state"><br>
@@ -86,11 +129,15 @@
 
         <input type="submit" value="Submit">
       </form>
-      <a id="outputHref" href="">Link</a>
 
+      <label for="outputHref">Output HREF:</label><br>
+      <input type="text" id="outputHref" name="outputHref" size="45" value="Generated link will appear here"><br>
     </div>
-    <div class="box" id="checkboxContainer">
+    <div class="box">
       <h2>Scopes</h2>
+      <fieldset id="checkboxContainer">
+
+      </fieldset>
     </div>
   </div>
 
